@@ -1,0 +1,37 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.privateKeyBufferFromECPair = exports.privateKeyBufferToECPair = void 0;
+const bitcoinjs_lib_1 = require("bitcoinjs-lib");
+/**
+ * Create an ECPair from the raw private key bytes
+ * @param {Buffer} buffer - Private key for the ECPair. Must be exactly 32 bytes.
+ * @param {Object} [network] - Network for the ECPair. Defaults to bitcoin.
+ * @return {ECPair}
+ */
+function privateKeyBufferToECPair(buffer, network) {
+    if (!Buffer.isBuffer(buffer) || buffer.length !== 32) {
+        throw new Error('invalid private key buffer');
+    }
+    return bitcoinjs_lib_1.ECPair.fromPrivateKey(buffer);
+}
+exports.privateKeyBufferToECPair = privateKeyBufferToECPair;
+/**
+ * Get the private key as a 32 bytes buffer. If it is smaller than 32 bytes, pad it with zeros
+ * @param {ECPair} ecPair
+ * @return Buffer 32 bytes
+ */
+function privateKeyBufferFromECPair(ecPair) {
+    if (ecPair.constructor.name !== 'ECPair') {
+        throw new TypeError(`invalid argument ecpair`);
+    }
+    const privkey = ecPair.privateKey;
+    if (!Buffer.isBuffer(privkey)) {
+        throw new Error(`unexpected privkey type`);
+    }
+    if (privkey.length !== 32) {
+        throw new Error(`unexpected privkey length`);
+    }
+    return privkey;
+}
+exports.privateKeyBufferFromECPair = privateKeyBufferFromECPair;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoia2V5dXRpbC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy9iaXRnby9rZXl1dGlsLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBLGlEQUF1QztBQUd2Qzs7Ozs7R0FLRztBQUNILFNBQWdCLHdCQUF3QixDQUFDLE1BQWMsRUFBRSxPQUFpQjtJQUN4RSxJQUFJLENBQUMsTUFBTSxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUMsSUFBSSxNQUFNLENBQUMsTUFBTSxLQUFLLEVBQUUsRUFBRTtRQUNwRCxNQUFNLElBQUksS0FBSyxDQUFDLDRCQUE0QixDQUFDLENBQUM7S0FDL0M7SUFFRCxPQUFPLHNCQUFNLENBQUMsY0FBYyxDQUFDLE1BQU0sQ0FBQyxDQUFDO0FBQ3ZDLENBQUM7QUFORCw0REFNQztBQUVEOzs7O0dBSUc7QUFDSCxTQUFnQiwwQkFBMEIsQ0FBQyxNQUE4QjtJQUN2RSxJQUFJLE1BQU0sQ0FBQyxXQUFXLENBQUMsSUFBSSxLQUFLLFFBQVEsRUFBRTtRQUN4QyxNQUFNLElBQUksU0FBUyxDQUFDLHlCQUF5QixDQUFDLENBQUM7S0FDaEQ7SUFFRCxNQUFNLE9BQU8sR0FBRyxNQUFNLENBQUMsVUFBVSxDQUFDO0lBQ2xDLElBQUksQ0FBQyxNQUFNLENBQUMsUUFBUSxDQUFDLE9BQU8sQ0FBQyxFQUFFO1FBQzdCLE1BQU0sSUFBSSxLQUFLLENBQUMseUJBQXlCLENBQUMsQ0FBQztLQUM1QztJQUNELElBQUksT0FBTyxDQUFDLE1BQU0sS0FBSyxFQUFFLEVBQUU7UUFDekIsTUFBTSxJQUFJLEtBQUssQ0FBQywyQkFBMkIsQ0FBQyxDQUFDO0tBQzlDO0lBRUQsT0FBTyxPQUFPLENBQUM7QUFDakIsQ0FBQztBQWRELGdFQWNDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgRUNQYWlyIH0gZnJvbSAnYml0Y29pbmpzLWxpYic7XG5pbXBvcnQgeyBOZXR3b3JrIH0gZnJvbSAnLi4vbmV0d29ya3MnO1xuXG4vKipcbiAqIENyZWF0ZSBhbiBFQ1BhaXIgZnJvbSB0aGUgcmF3IHByaXZhdGUga2V5IGJ5dGVzXG4gKiBAcGFyYW0ge0J1ZmZlcn0gYnVmZmVyIC0gUHJpdmF0ZSBrZXkgZm9yIHRoZSBFQ1BhaXIuIE11c3QgYmUgZXhhY3RseSAzMiBieXRlcy5cbiAqIEBwYXJhbSB7T2JqZWN0fSBbbmV0d29ya10gLSBOZXR3b3JrIGZvciB0aGUgRUNQYWlyLiBEZWZhdWx0cyB0byBiaXRjb2luLlxuICogQHJldHVybiB7RUNQYWlyfVxuICovXG5leHBvcnQgZnVuY3Rpb24gcHJpdmF0ZUtleUJ1ZmZlclRvRUNQYWlyKGJ1ZmZlcjogQnVmZmVyLCBuZXR3b3JrPzogTmV0d29yayk6IEVDUGFpci5FQ1BhaXJJbnRlcmZhY2Uge1xuICBpZiAoIUJ1ZmZlci5pc0J1ZmZlcihidWZmZXIpIHx8IGJ1ZmZlci5sZW5ndGggIT09IDMyKSB7XG4gICAgdGhyb3cgbmV3IEVycm9yKCdpbnZhbGlkIHByaXZhdGUga2V5IGJ1ZmZlcicpO1xuICB9XG5cbiAgcmV0dXJuIEVDUGFpci5mcm9tUHJpdmF0ZUtleShidWZmZXIpO1xufVxuXG4vKipcbiAqIEdldCB0aGUgcHJpdmF0ZSBrZXkgYXMgYSAzMiBieXRlcyBidWZmZXIuIElmIGl0IGlzIHNtYWxsZXIgdGhhbiAzMiBieXRlcywgcGFkIGl0IHdpdGggemVyb3NcbiAqIEBwYXJhbSB7RUNQYWlyfSBlY1BhaXJcbiAqIEByZXR1cm4gQnVmZmVyIDMyIGJ5dGVzXG4gKi9cbmV4cG9ydCBmdW5jdGlvbiBwcml2YXRlS2V5QnVmZmVyRnJvbUVDUGFpcihlY1BhaXI6IEVDUGFpci5FQ1BhaXJJbnRlcmZhY2UpOiBCdWZmZXIge1xuICBpZiAoZWNQYWlyLmNvbnN0cnVjdG9yLm5hbWUgIT09ICdFQ1BhaXInKSB7XG4gICAgdGhyb3cgbmV3IFR5cGVFcnJvcihgaW52YWxpZCBhcmd1bWVudCBlY3BhaXJgKTtcbiAgfVxuXG4gIGNvbnN0IHByaXZrZXkgPSBlY1BhaXIucHJpdmF0ZUtleTtcbiAgaWYgKCFCdWZmZXIuaXNCdWZmZXIocHJpdmtleSkpIHtcbiAgICB0aHJvdyBuZXcgRXJyb3IoYHVuZXhwZWN0ZWQgcHJpdmtleSB0eXBlYCk7XG4gIH1cbiAgaWYgKHByaXZrZXkubGVuZ3RoICE9PSAzMikge1xuICAgIHRocm93IG5ldyBFcnJvcihgdW5leHBlY3RlZCBwcml2a2V5IGxlbmd0aGApO1xuICB9XG5cbiAgcmV0dXJuIHByaXZrZXk7XG59XG4iXX0=

@@ -1,0 +1,108 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.toCanonicalFormat = exports.toOutputScriptTryFormats = exports.toOutputScriptAndFormat = exports.toOutputScriptWithFormat = exports.fromOutputScriptWithFormat = exports.isSupportedAddressFormat = exports.addressFormats = void 0;
+/**
+ * Implements methods for nonstandard (non-canonical) address formats.
+ *
+ * Use `toOutputScriptTryFormats()` instead of `toOutputScript()` to parse addresses in
+ * non-canonical formats
+ */
+const networks_1 = require("./networks");
+const address_1 = require("./address");
+const bcashAddress = require("./bitgo/bitcoincash/address");
+exports.addressFormats = ['default', 'cashaddr'];
+/**
+ * @param format
+ * @param network
+ * @return true iff format is supported for network
+ */
+function isSupportedAddressFormat(format, network) {
+    switch (format) {
+        case 'default':
+            return true;
+        case 'cashaddr':
+            return networks_1.getMainnet(network) === networks_1.networks.bitcoincash;
+    }
+    throw new Error(`unknown address format ${format}`);
+}
+exports.isSupportedAddressFormat = isSupportedAddressFormat;
+/**
+ * @param outputScript
+ * @param format
+ * @param network
+ * @return address formatted using provided AddressFormat
+ */
+function fromOutputScriptWithFormat(outputScript, format, network) {
+    if (!isSupportedAddressFormat(format, network)) {
+        throw new Error(`unsupported address format ${format} for network ${networks_1.getNetworkName(network)}`);
+    }
+    switch (networks_1.getMainnet(network)) {
+        case networks_1.networks.bitcoincash:
+            return bcashAddress.fromOutputScriptWithFormat(outputScript, format, network);
+        default:
+            return address_1.fromOutputScript(outputScript, network);
+    }
+}
+exports.fromOutputScriptWithFormat = fromOutputScriptWithFormat;
+/**
+ * @param address
+ * @param format
+ * @param network
+ * @return output script parsed with provided AddressFormat
+ */
+function toOutputScriptWithFormat(address, format, network) {
+    if (!isSupportedAddressFormat(format, network)) {
+        throw new Error(`unsupported address format ${format} for network ${networks_1.getNetworkName(network)}`);
+    }
+    switch (networks_1.getMainnet(network)) {
+        case networks_1.networks.bitcoincash:
+            return bcashAddress.toOutputScriptWithFormat(address, format, network);
+        default:
+            return address_1.toOutputScript(address, network);
+    }
+}
+exports.toOutputScriptWithFormat = toOutputScriptWithFormat;
+/**
+ * Attempts to parse address with different address formats, returns first hit.
+ * @param address
+ * @param network
+ * @param formats - defaults to all supported address formats for network
+ * @return tuple with [AddressFormat, Buffer] containing format and parsed output script
+ */
+function toOutputScriptAndFormat(address, network, formats) {
+    if (!formats) {
+        formats = exports.addressFormats.filter((f) => isSupportedAddressFormat(f, network));
+    }
+    for (const format of formats) {
+        try {
+            return [format, toOutputScriptWithFormat(address, format, network)];
+        }
+        catch (e) {
+            // try next
+        }
+    }
+    throw new Error(`could not parse outputScript [formats=${formats}]`);
+}
+exports.toOutputScriptAndFormat = toOutputScriptAndFormat;
+/**
+ * Same as `toOutputScriptAndFormat`, only returning script
+ * @param address - {@see toOutputScriptAndFormat}
+ * @param network - {@see toOutputScriptAndFormat}
+ * @param formats - {@see toOutputScriptAndFormat}
+ * @return parsed output script
+ */
+function toOutputScriptTryFormats(address, network, formats) {
+    const [, outputScript] = toOutputScriptAndFormat(address, network, formats);
+    return outputScript;
+}
+exports.toOutputScriptTryFormats = toOutputScriptTryFormats;
+/**
+ * @param address
+ * @param network
+ * @return address in canonical format
+ */
+function toCanonicalFormat(address, network) {
+    return address_1.fromOutputScript(toOutputScriptTryFormats(address, network), network);
+}
+exports.toCanonicalFormat = toCanonicalFormat;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYWRkcmVzc0Zvcm1hdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9hZGRyZXNzRm9ybWF0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBOzs7OztHQUtHO0FBQ0gseUNBQTJFO0FBQzNFLHVDQUE2RDtBQUU3RCw0REFBNEQ7QUFFL0MsUUFBQSxjQUFjLEdBQUcsQ0FBQyxTQUFTLEVBQUUsVUFBVSxDQUFVLENBQUM7QUFJL0Q7Ozs7R0FJRztBQUNILFNBQWdCLHdCQUF3QixDQUFDLE1BQXFCLEVBQUUsT0FBZ0I7SUFDOUUsUUFBUSxNQUFNLEVBQUU7UUFDZCxLQUFLLFNBQVM7WUFDWixPQUFPLElBQUksQ0FBQztRQUNkLEtBQUssVUFBVTtZQUNiLE9BQU8scUJBQVUsQ0FBQyxPQUFPLENBQUMsS0FBSyxtQkFBUSxDQUFDLFdBQVcsQ0FBQztLQUN2RDtJQUNELE1BQU0sSUFBSSxLQUFLLENBQUMsMEJBQTBCLE1BQU0sRUFBRSxDQUFDLENBQUM7QUFDdEQsQ0FBQztBQVJELDREQVFDO0FBRUQ7Ozs7O0dBS0c7QUFDSCxTQUFnQiwwQkFBMEIsQ0FBQyxZQUFvQixFQUFFLE1BQXFCLEVBQUUsT0FBZ0I7SUFDdEcsSUFBSSxDQUFDLHdCQUF3QixDQUFDLE1BQU0sRUFBRSxPQUFPLENBQUMsRUFBRTtRQUM5QyxNQUFNLElBQUksS0FBSyxDQUFDLDhCQUE4QixNQUFNLGdCQUFnQix5QkFBYyxDQUFDLE9BQU8sQ0FBQyxFQUFFLENBQUMsQ0FBQztLQUNoRztJQUVELFFBQVEscUJBQVUsQ0FBQyxPQUFPLENBQUMsRUFBRTtRQUMzQixLQUFLLG1CQUFRLENBQUMsV0FBVztZQUN2QixPQUFPLFlBQVksQ0FBQywwQkFBMEIsQ0FBQyxZQUFZLEVBQUUsTUFBTSxFQUFFLE9BQU8sQ0FBQyxDQUFDO1FBQ2hGO1lBQ0UsT0FBTywwQkFBZ0IsQ0FBQyxZQUFZLEVBQUUsT0FBTyxDQUFDLENBQUM7S0FDbEQ7QUFDSCxDQUFDO0FBWEQsZ0VBV0M7QUFFRDs7Ozs7R0FLRztBQUNILFNBQWdCLHdCQUF3QixDQUFDLE9BQWUsRUFBRSxNQUFxQixFQUFFLE9BQWdCO0lBQy9GLElBQUksQ0FBQyx3QkFBd0IsQ0FBQyxNQUFNLEVBQUUsT0FBTyxDQUFDLEVBQUU7UUFDOUMsTUFBTSxJQUFJLEtBQUssQ0FBQyw4QkFBOEIsTUFBTSxnQkFBZ0IseUJBQWMsQ0FBQyxPQUFPLENBQUMsRUFBRSxDQUFDLENBQUM7S0FDaEc7SUFFRCxRQUFRLHFCQUFVLENBQUMsT0FBTyxDQUFDLEVBQUU7UUFDM0IsS0FBSyxtQkFBUSxDQUFDLFdBQVc7WUFDdkIsT0FBTyxZQUFZLENBQUMsd0JBQXdCLENBQUMsT0FBTyxFQUFFLE1BQU0sRUFBRSxPQUFPLENBQUMsQ0FBQztRQUN6RTtZQUNFLE9BQU8sd0JBQWMsQ0FBQyxPQUFPLEVBQUUsT0FBTyxDQUFDLENBQUM7S0FDM0M7QUFDSCxDQUFDO0FBWEQsNERBV0M7QUFFRDs7Ozs7O0dBTUc7QUFDSCxTQUFnQix1QkFBdUIsQ0FDckMsT0FBZSxFQUNmLE9BQWdCLEVBQ2hCLE9BQXlCO0lBRXpCLElBQUksQ0FBQyxPQUFPLEVBQUU7UUFDWixPQUFPLEdBQUcsc0JBQWMsQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDLEVBQUUsRUFBRSxDQUFDLHdCQUF3QixDQUFDLENBQUMsRUFBRSxPQUFPLENBQUMsQ0FBQyxDQUFDO0tBQzlFO0lBRUQsS0FBSyxNQUFNLE1BQU0sSUFBSSxPQUFPLEVBQUU7UUFDNUIsSUFBSTtZQUNGLE9BQU8sQ0FBQyxNQUFNLEVBQUUsd0JBQXdCLENBQUMsT0FBTyxFQUFFLE1BQU0sRUFBRSxPQUFPLENBQUMsQ0FBQyxDQUFDO1NBQ3JFO1FBQUMsT0FBTyxDQUFDLEVBQUU7WUFDVixXQUFXO1NBQ1o7S0FDRjtJQUVELE1BQU0sSUFBSSxLQUFLLENBQUMseUNBQXlDLE9BQU8sR0FBRyxDQUFDLENBQUM7QUFDdkUsQ0FBQztBQWxCRCwwREFrQkM7QUFFRDs7Ozs7O0dBTUc7QUFDSCxTQUFnQix3QkFBd0IsQ0FBQyxPQUFlLEVBQUUsT0FBZ0IsRUFBRSxPQUF5QjtJQUNuRyxNQUFNLENBQUMsRUFBRSxZQUFZLENBQUMsR0FBRyx1QkFBdUIsQ0FBQyxPQUFPLEVBQUUsT0FBTyxFQUFFLE9BQU8sQ0FBQyxDQUFDO0lBQzVFLE9BQU8sWUFBWSxDQUFDO0FBQ3RCLENBQUM7QUFIRCw0REFHQztBQUVEOzs7O0dBSUc7QUFDSCxTQUFnQixpQkFBaUIsQ0FBQyxPQUFlLEVBQUUsT0FBZ0I7SUFDakUsT0FBTywwQkFBZ0IsQ0FBQyx3QkFBd0IsQ0FBQyxPQUFPLEVBQUUsT0FBTyxDQUFDLEVBQUUsT0FBTyxDQUFDLENBQUM7QUFDL0UsQ0FBQztBQUZELDhDQUVDIiwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBJbXBsZW1lbnRzIG1ldGhvZHMgZm9yIG5vbnN0YW5kYXJkIChub24tY2Fub25pY2FsKSBhZGRyZXNzIGZvcm1hdHMuXG4gKlxuICogVXNlIGB0b091dHB1dFNjcmlwdFRyeUZvcm1hdHMoKWAgaW5zdGVhZCBvZiBgdG9PdXRwdXRTY3JpcHQoKWAgdG8gcGFyc2UgYWRkcmVzc2VzIGluXG4gKiBub24tY2Fub25pY2FsIGZvcm1hdHNcbiAqL1xuaW1wb3J0IHsgZ2V0TWFpbm5ldCwgZ2V0TmV0d29ya05hbWUsIE5ldHdvcmssIG5ldHdvcmtzIH0gZnJvbSAnLi9uZXR3b3Jrcyc7XG5pbXBvcnQgeyBmcm9tT3V0cHV0U2NyaXB0LCB0b091dHB1dFNjcmlwdCB9IGZyb20gJy4vYWRkcmVzcyc7XG5cbmltcG9ydCAqIGFzIGJjYXNoQWRkcmVzcyBmcm9tICcuL2JpdGdvL2JpdGNvaW5jYXNoL2FkZHJlc3MnO1xuXG5leHBvcnQgY29uc3QgYWRkcmVzc0Zvcm1hdHMgPSBbJ2RlZmF1bHQnLCAnY2FzaGFkZHInXSBhcyBjb25zdDtcblxuZXhwb3J0IHR5cGUgQWRkcmVzc0Zvcm1hdCA9IHR5cGVvZiBhZGRyZXNzRm9ybWF0c1tudW1iZXJdO1xuXG4vKipcbiAqIEBwYXJhbSBmb3JtYXRcbiAqIEBwYXJhbSBuZXR3b3JrXG4gKiBAcmV0dXJuIHRydWUgaWZmIGZvcm1hdCBpcyBzdXBwb3J0ZWQgZm9yIG5ldHdvcmtcbiAqL1xuZXhwb3J0IGZ1bmN0aW9uIGlzU3VwcG9ydGVkQWRkcmVzc0Zvcm1hdChmb3JtYXQ6IEFkZHJlc3NGb3JtYXQsIG5ldHdvcms6IE5ldHdvcmspOiBib29sZWFuIHtcbiAgc3dpdGNoIChmb3JtYXQpIHtcbiAgICBjYXNlICdkZWZhdWx0JzpcbiAgICAgIHJldHVybiB0cnVlO1xuICAgIGNhc2UgJ2Nhc2hhZGRyJzpcbiAgICAgIHJldHVybiBnZXRNYWlubmV0KG5ldHdvcmspID09PSBuZXR3b3Jrcy5iaXRjb2luY2FzaDtcbiAgfVxuICB0aHJvdyBuZXcgRXJyb3IoYHVua25vd24gYWRkcmVzcyBmb3JtYXQgJHtmb3JtYXR9YCk7XG59XG5cbi8qKlxuICogQHBhcmFtIG91dHB1dFNjcmlwdFxuICogQHBhcmFtIGZvcm1hdFxuICogQHBhcmFtIG5ldHdvcmtcbiAqIEByZXR1cm4gYWRkcmVzcyBmb3JtYXR0ZWQgdXNpbmcgcHJvdmlkZWQgQWRkcmVzc0Zvcm1hdFxuICovXG5leHBvcnQgZnVuY3Rpb24gZnJvbU91dHB1dFNjcmlwdFdpdGhGb3JtYXQob3V0cHV0U2NyaXB0OiBCdWZmZXIsIGZvcm1hdDogQWRkcmVzc0Zvcm1hdCwgbmV0d29yazogTmV0d29yayk6IHN0cmluZyB7XG4gIGlmICghaXNTdXBwb3J0ZWRBZGRyZXNzRm9ybWF0KGZvcm1hdCwgbmV0d29yaykpIHtcbiAgICB0aHJvdyBuZXcgRXJyb3IoYHVuc3VwcG9ydGVkIGFkZHJlc3MgZm9ybWF0ICR7Zm9ybWF0fSBmb3IgbmV0d29yayAke2dldE5ldHdvcmtOYW1lKG5ldHdvcmspfWApO1xuICB9XG5cbiAgc3dpdGNoIChnZXRNYWlubmV0KG5ldHdvcmspKSB7XG4gICAgY2FzZSBuZXR3b3Jrcy5iaXRjb2luY2FzaDpcbiAgICAgIHJldHVybiBiY2FzaEFkZHJlc3MuZnJvbU91dHB1dFNjcmlwdFdpdGhGb3JtYXQob3V0cHV0U2NyaXB0LCBmb3JtYXQsIG5ldHdvcmspO1xuICAgIGRlZmF1bHQ6XG4gICAgICByZXR1cm4gZnJvbU91dHB1dFNjcmlwdChvdXRwdXRTY3JpcHQsIG5ldHdvcmspO1xuICB9XG59XG5cbi8qKlxuICogQHBhcmFtIGFkZHJlc3NcbiAqIEBwYXJhbSBmb3JtYXRcbiAqIEBwYXJhbSBuZXR3b3JrXG4gKiBAcmV0dXJuIG91dHB1dCBzY3JpcHQgcGFyc2VkIHdpdGggcHJvdmlkZWQgQWRkcmVzc0Zvcm1hdFxuICovXG5leHBvcnQgZnVuY3Rpb24gdG9PdXRwdXRTY3JpcHRXaXRoRm9ybWF0KGFkZHJlc3M6IHN0cmluZywgZm9ybWF0OiBBZGRyZXNzRm9ybWF0LCBuZXR3b3JrOiBOZXR3b3JrKTogQnVmZmVyIHtcbiAgaWYgKCFpc1N1cHBvcnRlZEFkZHJlc3NGb3JtYXQoZm9ybWF0LCBuZXR3b3JrKSkge1xuICAgIHRocm93IG5ldyBFcnJvcihgdW5zdXBwb3J0ZWQgYWRkcmVzcyBmb3JtYXQgJHtmb3JtYXR9IGZvciBuZXR3b3JrICR7Z2V0TmV0d29ya05hbWUobmV0d29yayl9YCk7XG4gIH1cblxuICBzd2l0Y2ggKGdldE1haW5uZXQobmV0d29yaykpIHtcbiAgICBjYXNlIG5ldHdvcmtzLmJpdGNvaW5jYXNoOlxuICAgICAgcmV0dXJuIGJjYXNoQWRkcmVzcy50b091dHB1dFNjcmlwdFdpdGhGb3JtYXQoYWRkcmVzcywgZm9ybWF0LCBuZXR3b3JrKTtcbiAgICBkZWZhdWx0OlxuICAgICAgcmV0dXJuIHRvT3V0cHV0U2NyaXB0KGFkZHJlc3MsIG5ldHdvcmspO1xuICB9XG59XG5cbi8qKlxuICogQXR0ZW1wdHMgdG8gcGFyc2UgYWRkcmVzcyB3aXRoIGRpZmZlcmVudCBhZGRyZXNzIGZvcm1hdHMsIHJldHVybnMgZmlyc3QgaGl0LlxuICogQHBhcmFtIGFkZHJlc3NcbiAqIEBwYXJhbSBuZXR3b3JrXG4gKiBAcGFyYW0gZm9ybWF0cyAtIGRlZmF1bHRzIHRvIGFsbCBzdXBwb3J0ZWQgYWRkcmVzcyBmb3JtYXRzIGZvciBuZXR3b3JrXG4gKiBAcmV0dXJuIHR1cGxlIHdpdGggW0FkZHJlc3NGb3JtYXQsIEJ1ZmZlcl0gY29udGFpbmluZyBmb3JtYXQgYW5kIHBhcnNlZCBvdXRwdXQgc2NyaXB0XG4gKi9cbmV4cG9ydCBmdW5jdGlvbiB0b091dHB1dFNjcmlwdEFuZEZvcm1hdChcbiAgYWRkcmVzczogc3RyaW5nLFxuICBuZXR3b3JrOiBOZXR3b3JrLFxuICBmb3JtYXRzPzogQWRkcmVzc0Zvcm1hdFtdXG4pOiBbQWRkcmVzc0Zvcm1hdCwgQnVmZmVyXSB7XG4gIGlmICghZm9ybWF0cykge1xuICAgIGZvcm1hdHMgPSBhZGRyZXNzRm9ybWF0cy5maWx0ZXIoKGYpID0+IGlzU3VwcG9ydGVkQWRkcmVzc0Zvcm1hdChmLCBuZXR3b3JrKSk7XG4gIH1cblxuICBmb3IgKGNvbnN0IGZvcm1hdCBvZiBmb3JtYXRzKSB7XG4gICAgdHJ5IHtcbiAgICAgIHJldHVybiBbZm9ybWF0LCB0b091dHB1dFNjcmlwdFdpdGhGb3JtYXQoYWRkcmVzcywgZm9ybWF0LCBuZXR3b3JrKV07XG4gICAgfSBjYXRjaCAoZSkge1xuICAgICAgLy8gdHJ5IG5leHRcbiAgICB9XG4gIH1cblxuICB0aHJvdyBuZXcgRXJyb3IoYGNvdWxkIG5vdCBwYXJzZSBvdXRwdXRTY3JpcHQgW2Zvcm1hdHM9JHtmb3JtYXRzfV1gKTtcbn1cblxuLyoqXG4gKiBTYW1lIGFzIGB0b091dHB1dFNjcmlwdEFuZEZvcm1hdGAsIG9ubHkgcmV0dXJuaW5nIHNjcmlwdFxuICogQHBhcmFtIGFkZHJlc3MgLSB7QHNlZSB0b091dHB1dFNjcmlwdEFuZEZvcm1hdH1cbiAqIEBwYXJhbSBuZXR3b3JrIC0ge0BzZWUgdG9PdXRwdXRTY3JpcHRBbmRGb3JtYXR9XG4gKiBAcGFyYW0gZm9ybWF0cyAtIHtAc2VlIHRvT3V0cHV0U2NyaXB0QW5kRm9ybWF0fVxuICogQHJldHVybiBwYXJzZWQgb3V0cHV0IHNjcmlwdFxuICovXG5leHBvcnQgZnVuY3Rpb24gdG9PdXRwdXRTY3JpcHRUcnlGb3JtYXRzKGFkZHJlc3M6IHN0cmluZywgbmV0d29yazogTmV0d29yaywgZm9ybWF0cz86IEFkZHJlc3NGb3JtYXRbXSk6IEJ1ZmZlciB7XG4gIGNvbnN0IFssIG91dHB1dFNjcmlwdF0gPSB0b091dHB1dFNjcmlwdEFuZEZvcm1hdChhZGRyZXNzLCBuZXR3b3JrLCBmb3JtYXRzKTtcbiAgcmV0dXJuIG91dHB1dFNjcmlwdDtcbn1cblxuLyoqXG4gKiBAcGFyYW0gYWRkcmVzc1xuICogQHBhcmFtIG5ldHdvcmtcbiAqIEByZXR1cm4gYWRkcmVzcyBpbiBjYW5vbmljYWwgZm9ybWF0XG4gKi9cbmV4cG9ydCBmdW5jdGlvbiB0b0Nhbm9uaWNhbEZvcm1hdChhZGRyZXNzOiBzdHJpbmcsIG5ldHdvcms6IE5ldHdvcmspOiBzdHJpbmcge1xuICByZXR1cm4gZnJvbU91dHB1dFNjcmlwdCh0b091dHB1dFNjcmlwdFRyeUZvcm1hdHMoYWRkcmVzcywgbmV0d29yayksIG5ldHdvcmspO1xufVxuIl19

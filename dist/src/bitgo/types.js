@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.isTriple = exports.isTuple = void 0;
+function isTuple(arr) {
+    return arr.length === 2;
+}
+exports.isTuple = isTuple;
+function isTriple(arr) {
+    return arr.length === 3;
+}
+exports.isTriple = isTriple;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidHlwZXMuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvYml0Z28vdHlwZXMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBRUEsU0FBZ0IsT0FBTyxDQUFJLEdBQVE7SUFDakMsT0FBTyxHQUFHLENBQUMsTUFBTSxLQUFLLENBQUMsQ0FBQztBQUMxQixDQUFDO0FBRkQsMEJBRUM7QUFJRCxTQUFnQixRQUFRLENBQUksR0FBUTtJQUNsQyxPQUFPLEdBQUcsQ0FBQyxNQUFNLEtBQUssQ0FBQyxDQUFDO0FBQzFCLENBQUM7QUFGRCw0QkFFQyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCB0eXBlIFR1cGxlPFQ+ID0gW1QsIFRdO1xuXG5leHBvcnQgZnVuY3Rpb24gaXNUdXBsZTxUPihhcnI6IFRbXSk6IGFyciBpcyBUdXBsZTxUPiB7XG4gIHJldHVybiBhcnIubGVuZ3RoID09PSAyO1xufVxuXG5leHBvcnQgdHlwZSBUcmlwbGU8VD4gPSBbVCwgVCwgVF07XG5cbmV4cG9ydCBmdW5jdGlvbiBpc1RyaXBsZTxUPihhcnI6IFRbXSk6IGFyciBpcyBUcmlwbGU8VD4ge1xuICByZXR1cm4gYXJyLmxlbmd0aCA9PT0gMztcbn1cbiJdfQ==
