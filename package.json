@@ -18,13 +18,6 @@
     "javascript"
   ],
   "scripts": {
-    "prepare": "npm run build",
-    "build": "yarn tsc --build --incremental --verbose .",
-    "coverage-report": "nyc report --reporter=lcov",
-    "coverage-html": "nyc report --reporter=html",
-    "coverage": "npm run build && nyc --check-coverage mocha",
-    "test": "npm run coverage",
-    "unit-test": "mocha",
     "lint": "eslint --quiet .",
     "fmt": "prettier --write '{src,test}/**/*.{ts,js}'"
   },
