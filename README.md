@@ -25,11 +25,13 @@ yarn add @bitgo/utxo-lib
 ## Setup
 
 JavaScript (ESM)
+
 ``` javascript
 import * as utxolib from '@bitgo/utxo-lib'
 ```
 
 NodeJS (CJS)
+
 ``` javascript
 const utxolib = require('@bitgo/utxo-lib')
 ```
@@ -51,14 +53,14 @@ The `UtxoTransaction(Builder)` classes have the same interface as the `Transacti
 
 ## Supported coins
 
-|Network|Mainnet|Testnet|
-|---|---|---|
-|Bitcoin|`utxolib.networks.bitcoin`|`utxolib.networks.testnet`|
-|Bitcoin Cash|`utxolib.networks.bitcoincash`|`utxolib.networks.bitcoincashTestnet`|
-|Bitcoin Gold|`utxolib.networks.bitcoingold`|`utxolib.networks.bitcoingoldTestnet`|
-|Bitcoin SV (Satoshi Vision)|`utxolib.networks.bitcoinsv`|`utxolib.networks.bitcoinsvTestnet`|
-|Dash|`utxolib.networks.dash`|`utxolib.networks.dash`|
-|Litecoin|`utxolib.networks.litecoin`|`utxolib.networks.litecoinTest`|
-|Zcash|`utxolib.networks.zcash`|`utxolib.networks.zcashTest`|
+| Network                     | Mainnet                        | Testnet                               |
+| --------------------------- | ------------------------------ | ------------------------------------- |
+| Bitcoin                     | `utxolib.networks.bitcoin`     | `utxolib.networks.testnet`            |
+| Bitcoin Cash                | `utxolib.networks.bitcoincash` | `utxolib.networks.bitcoincashTestnet` |
+| Bitcoin Gold                | `utxolib.networks.bitcoingold` | `utxolib.networks.bitcoingoldTestnet` |
+| Bitcoin SV (Satoshi Vision) | `utxolib.networks.bitcoinsv`   | `utxolib.networks.bitcoinsvTestnet`   |
+| Dash                        | `utxolib.networks.dash`        | `utxolib.networks.dash`               |
+| Litecoin                    | `utxolib.networks.litecoin`    | `utxolib.networks.litecoinTest`       |
+| Zcash                       | `utxolib.networks.zcash`       | `utxolib.networks.zcashTest`          |
 
 > [Bitcoin SV](https://blog.bitgo.com/bsv-deprecation-6b3fff4df34c) no longer supports sending funds to BitGo wallets. Existing customers with Bitcoin SV in BitGo wallets will still be able to access and sweep funds to an external Bitcoin SV wallet.
